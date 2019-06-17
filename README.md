@@ -18,4 +18,4 @@ covert .view(from bilibili manga) to webp
 1，当文件夹下不存在index.dat时，按文件修改顺序排序命名（大多情况下顺序并不正确）
 
 2，当文件夹下存在index.dat文件（使用哔哩哔哩漫画app中的“缓存”功能下载的漫画时会有此文件），解密为json文件，使得图片可以得到正确的按照顺序重命名
-。此段代码来自[@lossme](https://github.com/lossme/TencentComicBook/blob/master/onepiece/site/bilibili.py）
+。此段代码来自[@lossme](https://github.com/lossme/TencentComicBook/blob/master/onepiece/site/bilibili.py）)
