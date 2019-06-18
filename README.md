@@ -19,3 +19,12 @@ covert .view(from bilibili manga) to webp
 
 2，当文件夹下存在index.dat文件（使用哔哩哔哩漫画app中的“缓存”功能下载的漫画时会有此文件），解密为json文件，使得图片可以得到正确的按照顺序重命名
 。此段代码来自[@lossme](https://github.com/lossme/TencentComicBook/blob/master/onepiece/site/bilibili.py）)
+
+## 建议的使用步骤
+0，下载本工具，放置在某文件夹内
+
+1，在安卓手机上，哔哩哔哩漫画app内使用“缓存”功能 下载需要提取的漫画
+
+2，将 内部存储/data/bilibili/comic/down下以5位数字为文件名的文件夹，复制到第0步的文件夹内
+
+3，确保可以联网，运行本工具本工具将自动重命名漫画名、章节名、图片名
