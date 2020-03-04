@@ -75,7 +75,7 @@ def getpicDict(comicId, episodeId, indexDataFile):
     picDict = {}
     n = 1
     for pic in picData:
-        picName = os.path.basename(pic).replace('.jpg', '.jpg.view')
+        picName = os.path.basename(pic).replace('.png', '.png.view').replace('.jpg','.jpg.view')
         picDict[picName] = str(n)+'.webp'
         n = n+1
     return picDict
@@ -106,7 +106,7 @@ def main():
             else:
                 path = dirs[0]
             fileList = [entry.path for entry in os.scandir(
-                path) if entry.name.endswith("jpg.view")]
+                path) if entry.name.endswith(".view")]
             filePath = sorted(fileList,  key=lambda x: os.path.getmtime(x))
 
             if os.path.exists(os.path.join(path, 'index.dat')):
