@@ -1,6 +1,8 @@
 # view2webp
 covert .view(from bilibili manga) to webp
 
+**注意：新版客户端3.7.0之后，缓存文件需要root后才可以访问，并且图片未加密，不再需要使用该工具解密，只需要改文件后缀为webp即可**
+
 ## 主要原理
 
 删除缓存图片文件的前9个字节
