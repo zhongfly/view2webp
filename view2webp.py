@@ -1,13 +1,15 @@
-# encoding:UTF-8
-# python3.6
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 import os
-import io
 import json
-import zipfile
 import re
 import requests
+import sys
 
-workDir=os.getcwd()
+try:
+    workDir=os.path.expanduser(sys.argv[1])
+except:
+    workDir=os.getcwd()
 
 def getComicDetail(id):
     url = "https://manga.bilibili.com/twirp/comic.v2.Comic/ComicDetail"
@@ -38,45 +40,13 @@ def getEpDict(ep_list):
 
 
 def getpicDict(comicId, episodeId, indexDataFile):
-    def unzip(file, target_dir):
-        obj = zipfile.ZipFile(file)
-        obj.extractall(target_dir)
-
-    def generateHashKey(comicId, episodeId):
-        n = [None for i in range(8)]
-        e = int(comicId)
-        t = int(episodeId)
-        n[0] = t
-        n[1] = t >> 8
-        n[2] = t >> 16
-        n[3] = t >> 24
-        n[4] = e
-        n[5] = e >> 8
-        n[6] = e >> 16
-        n[7] = e >> 24
-        for idx in range(8):
-            n[idx] = n[idx] % 256
-        return n
-
-    def unhashContent(hashKey, indexData):
-        for idx in range(len(indexData)):
-            indexData[idx] ^= hashKey[idx % 8]
-        return bytes(indexData)
-
-    key = generateHashKey(comicId, episodeId)
-    with open(indexDataFile, 'rb') as f:
-        indexData = f.read()
-        indexData = list(indexData)[9:]
-    indexData = unhashContent(hashKey=key, indexData=indexData)
-    file = io.BytesIO(indexData)
-    unzip(file, os.path.dirname(indexDataFile))
     json_file = os.path.join(indexDataFile)
-    picData = json.load(open(json_file))["pics"]
+    picData = json.load(open(json_file))
     picDict = {}
     n = 1
     for pic in picData:
-        picName = os.path.basename(pic).replace('.png', '.png.view').replace('.jpg','.jpg.view')
-        picDict[picName] = str(n)+'.webp'
+        picName = os.path.basename(pic['path']).replace('.png', '.png.view').replace('.jpg','.jpg.view')
+        picDict[picName] = str(n)+os.path.splitext(pic['path'])[-1]
         n = n+1
     return picDict
 
@@ -100,17 +70,13 @@ def main():
         epDirs = [entry.path for entry in os.scandir(
             comic) if entry.is_dir() and re.match(r'\d+$', entry.name) != None]
         for ep in epDirs:
-            dirs = [entry.path for entry in os.scandir(ep) if entry.is_dir()]
-            if len(dirs) < 1:
-                path = ep
-            else:
-                path = dirs[0]
+            path = ep
             fileList = [entry.path for entry in os.scandir(
                 path) if entry.name.endswith(".view")]
             filePath = sorted(fileList,  key=lambda x: os.path.getmtime(x))
 
-            if os.path.exists(os.path.join(path, 'index.dat')):
-                indexDataFile = os.path.join(path, 'index.dat')
+            if os.path.exists(os.path.join(path, 'int', 'index.dat')):
+                indexDataFile = os.path.join(path, 'int', 'index.dat')
                 comicId = folderName
                 episodeId = os.path.basename(ep)
                 picDict = getpicDict(comicId, episodeId, indexDataFile)
@@ -124,7 +90,7 @@ def main():
                     newName = picDict[os.path.basename(file)]
                     newPath = os.path.join(os.path.dirname(file), newName)
                 else:
-                    newPath = os.path.join(os.path.dirname(file), f"{n}.webp".zfill(7))
+                    newPath = os.path.join(os.path.dirname(file), (f"{n}"+os.path.splitext(file.replace('.view', ''))[-1]).zfill(7))
                 os.rename(file, newPath)
                 n = n+1
 
